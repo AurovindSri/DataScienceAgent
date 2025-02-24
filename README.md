@@ -1,4 +1,5 @@
 # DataScienceAgent
+An AI agent with ability to execute python commands and perform Data Science related tasks.
 
 ## Steps to Run the Agent API and UI
 
