@@ -21,6 +21,7 @@ from IPython.display import Image, display
 
 
 app = FastAPI()
+config_thread_id = [] #Keeps track of thread Ids to prevent duplicate Tool runs
 
 # MongoDB setup for Persistence
 mongo_client = MongoClient('mongodb://localhost:27017/')
@@ -83,9 +84,11 @@ def get_chat_history(thread_id: str) -> List[AnyMessage]:
     if react_graph_memory.get_state(config)[0]:
         messages = react_graph_memory.get_state(config)[0]['messages']
         for m in messages:
-            if m.type == "ai" and m.tool_calls:
+            if m.type == "ai" and m.tool_calls and (thread_id not in config_thread_id):
+                #print("tool run")
                 string_arg = m.tool_calls[0]["args"]["__arg1"]
                 python_repl.run(string_arg)
+                config_thread_id.append(thread_id)
         return messages
     else:
         return None 
